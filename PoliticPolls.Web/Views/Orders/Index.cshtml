@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Главная";
+}
+
+<div class="jumbotron">
+    <h1>Рейтинг политиков</h1>
+    <p class="lead">Данное веб-приложение предназначено для просмотра и редактирования таблиц БД "Рейтинг политиков"</p>
+    <p>Выберите название таблицы из списка для вывода её содержимого</p>
+    <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+            @Html.ActionLink("Наказы", "Index", "Orders")
+        </li>
+        <li class="nav-item">
+            @Html.ActionLink("Политики", "Index", "Politicians")
+        </li>
+        <li class="nav-item">
+            @Html.ActionLink("Рейтинг политиков", "Index", "PoliticianSets")
+        </li>
+        <li class="nav-item">
+            @Html.ActionLink("Опросы", "Index", "Polls")
+        </li>
+        <li class="nav-item">
+            @Html.ActionLink("Респонденты", "Index", "Respondents")
+        </li>
+        <li class="nav-item">
+            @Html.ActionLink("Избирательные округа", "Index", "Terrtitories")
+        </li>
+    </ul>
+</div>
