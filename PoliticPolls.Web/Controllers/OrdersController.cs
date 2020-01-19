@@ -23,7 +23,7 @@ namespace PoliticPolls.Web.Controllers
         // GET: Orders
         public ActionResult Index()
         {
-            var orders = db.Orders.Include(o => o.IdPolitician).ToList();
+            var orders = db.Orders.ToList();//.Include(o => o.IdPolitician)
             return View(orders);
         }
 
