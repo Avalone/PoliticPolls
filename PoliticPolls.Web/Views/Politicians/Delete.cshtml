@@ -1,0 +1,56 @@
+﻿@model PoliticPolls.DataModel.Politicians
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>politicians</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Surname)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Surname)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Patro)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Patro)
+        </dd>
+
+        <dt>
+            @*@Html.DisplayNameFor(model => model.terrtitory.territory_name)*@
+        </dt>
+
+        <dd>
+            @*@Html.DisplayFor(model => model.terrtitory.territory_name)*@
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Назад к списку", "Index")
+        </div>
+    }
+</div>

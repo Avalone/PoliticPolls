@@ -1,0 +1,45 @@
+﻿@model IEnumerable<PoliticPolls.DataModel.PoliticianSets>
+
+@{
+    ViewBag.Title = "Рейтинг политиков";
+}
+
+<h2>Рейтинг политиков</h2>
+
+<p>
+    @Html.ActionLink("Создать", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Rating)
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.politicians.surname) @Html.DisplayNameFor(model => model.politicians.name) @Html.DisplayNameFor(model => model.politicians.patro)*@
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.poll.id)*@
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rating)
+        </td>
+        <td>
+            @*@Html.DisplayFor(modelItem => item.politicians.surname) @Html.DisplayFor(modelItem => item.politicians.name) @Html.DisplayFor(modelItem => item.politicians.patro)*@
+        </td>
+        <td>
+            @*@Html.DisplayFor(modelItem => item.poll.id)*@
+        </td>
+        <td>
+            @Html.ActionLink("Редактировать", "Edit", new { id_poll = item.IdPoll, id_politician = item.IdPolitician }) |
+            @Html.ActionLink("Подробнее", "Details", new { id_poll = item.IdPoll, id_politician = item.IdPolitician }) |
+            @Html.ActionLink("Удалить", "Delete", new { id_poll = item.IdPoll, id_politician = item.IdPolitician })
+        </td>
+    </tr>
+}
+
+</table>

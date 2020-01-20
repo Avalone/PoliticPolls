@@ -23,7 +23,12 @@ namespace PoliticPolls.Web.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        //public IActionResult Privacy()
+        //{
+        //    return View();
+        //}
+
+        public ActionResult About()
         {
             return View();
         }
