@@ -9,7 +9,7 @@ namespace PoliticPolls.DataModel
         public decimal IdPolitician { get; set; }
         public decimal? Rating { get; set; }
 
-        public Politicians IdPoliticianNavigation { get; set; }
-        public Poll IdPollNavigation { get; set; }
+        public Politicians Politician { get; set; }
+        public Poll Poll { get; set; }
     }
 }

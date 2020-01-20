@@ -6,117 +6,117 @@ using System.Linq;
 
 namespace PoliticPolls.Web.Controllers
 {
-    public class OrdersController : Controller
+    public class PollsController : Controller
     {
         private ApplicationDbContext db;
 
-        public OrdersController(ApplicationDbContext db)
+        public PollsController(ApplicationDbContext db)
         {
             this.db = db;
         }
 
-        // GET: Orders
+        // GET: Polls
         public ActionResult Index()
         {
-            var orders = db.Orders.Include(o => o.Politician).ToList();
-            return View(orders);
+            var poll = db.Poll.Include(p => p.Respondent);
+            return View(poll.ToList());
         }
 
-        // GET: Orders/Details/5
+        // GET: Polls/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
-            var orders = db.Orders.Find(id);
-            if (orders == null)
+            var poll = db.Poll.Find(id);
+            if (poll == null)
             {
                 return NotFound();
             }
-            return View(orders);
+            return View(poll);
         }
 
-        // GET: Orders/Create
+        // GET: Polls/Create
         public ActionResult Create()
         {
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname");
+            ViewBag.id_respondent = new SelectList(db.Respondents, "Id", "Surname");
             return View();
         }
 
-        // POST: Orders/Create
+        // POST: Polls/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Id", "Text", "IdPolitician")] Orders orders)
+        public ActionResult Create([Bind("id","PollDate","IdRespondent")] Poll poll)
         {
             if (ModelState.IsValid)
             {
-                db.Orders.Add(orders);
+                db.Poll.Add(poll);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
-            return View(orders);
+            ViewBag.id_respondent = new SelectList(db.Respondents, "id", "surname", poll.IdRespondent);
+            return View(poll);
         }
 
-        // GET: Orders/Edit/5
+        // GET: Polls/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
-            var orders = db.Orders.Find(id);
-            if (orders == null)
+            var poll = db.Poll.Find(id);
+            if (poll == null)
             {
                 return NotFound();
             }
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
-            return View(orders);
+            ViewBag.id_respondent = new SelectList(db.Respondents, "Id", "Surname", poll.IdRespondent);
+            return View(poll);
         }
 
-        // POST: Orders/Edit/5
+        // POST: Polls/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind("Id", "Text", "IdPolitician")] Orders orders)
+        public ActionResult Edit([Bind("Id","PollDate","IdRespondent")] Poll poll)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(orders).State = EntityState.Modified;
+                db.Entry(poll).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
-            return View(orders);
+            ViewBag.id_respondent = new SelectList(db.Respondents, "Id", "Surname", poll.IdRespondent);
+            return View(poll);
         }
 
-        // GET: Orders/Delete/5
+        // GET: Polls/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
-            var orders = db.Orders.Find(id);
-            if (orders == null)
+            var poll = db.Poll.Find(id);
+            if (poll == null)
             {
                 return NotFound();
             }
-            return View(orders);
+            return View(poll);
         }
 
-        // POST: Orders/Delete/5
+        // POST: Polls/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var orders = db.Orders.Find(id);
-            db.Orders.Remove(orders);
+            var poll = db.Poll.Find(id);
+            db.Poll.Remove(poll);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -8,7 +8,7 @@ namespace PoliticPolls.DataModel
         public decimal IdPoll { get; set; }
         public decimal IdOrder { get; set; }
 
-        public Orders IdOrderNavigation { get; set; }
-        public Poll IdPollNavigation { get; set; }
+        public Orders Order { get; set; }
+        public Poll Poll { get; set; }
     }
 }

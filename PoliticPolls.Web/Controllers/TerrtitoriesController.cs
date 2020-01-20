@@ -1,122 +1,116 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PoliticPolls.DataModel;
 using System.Linq;
 
 namespace PoliticPolls.Web.Controllers
 {
-    public class OrdersController : Controller
+    public class TerrtitoriesController : Controller
     {
         private ApplicationDbContext db;
 
-        public OrdersController(ApplicationDbContext db)
+        public TerrtitoriesController(ApplicationDbContext db)
         {
             this.db = db;
         }
 
-        // GET: Orders
+        // GET: Terrtitories
         public ActionResult Index()
         {
-            var orders = db.Orders.Include(o => o.Politician).ToList();
-            return View(orders);
+            return View(db.Terrtitory.ToList());
         }
 
-        // GET: Orders/Details/5
+        // GET: Terrtitories/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
-            var orders = db.Orders.Find(id);
-            if (orders == null)
+            var terrtitory = db.Terrtitory.Find(id);
+            if (terrtitory == null)
             {
                 return NotFound();
             }
-            return View(orders);
+            return View(terrtitory);
         }
 
-        // GET: Orders/Create
+        // GET: Terrtitories/Create
         public ActionResult Create()
         {
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname");
             return View();
         }
 
-        // POST: Orders/Create
+        // POST: Terrtitories/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Id", "Text", "IdPolitician")] Orders orders)
+        public ActionResult Create([Bind("Id","TerritoryName")] Terrtitory terrtitory)
         {
             if (ModelState.IsValid)
             {
-                db.Orders.Add(orders);
+                db.Terrtitory.Add(terrtitory);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
-            return View(orders);
+            return View(terrtitory);
         }
 
-        // GET: Orders/Edit/5
+        // GET: Terrtitories/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
-            var orders = db.Orders.Find(id);
-            if (orders == null)
+            var terrtitory = db.Terrtitory.Find(id);
+            if (terrtitory == null)
             {
                 return NotFound();
             }
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
-            return View(orders);
+            return View(terrtitory);
         }
 
-        // POST: Orders/Edit/5
+        // POST: Terrtitories/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind("Id", "Text", "IdPolitician")] Orders orders)
+        public ActionResult Edit([Bind("Id","TerritoryName")] Terrtitory terrtitory)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(orders).State = EntityState.Modified;
+                db.Entry(terrtitory).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
-            return View(orders);
+            return View(terrtitory);
         }
 
-        // GET: Orders/Delete/5
+        // GET: Terrtitories/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
-            var orders = db.Orders.Find(id);
-            if (orders == null)
+            var terrtitory = db.Terrtitory.Find(id);
+            if (terrtitory == null)
             {
                 return NotFound();
             }
-            return View(orders);
+            return View(terrtitory);
         }
 
-        // POST: Orders/Delete/5
+        // POST: Terrtitories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var orders = db.Orders.Find(id);
-            db.Orders.Remove(orders);
+            var terrtitory = db.Terrtitory.Find(id);
+            db.Terrtitory.Remove(terrtitory);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

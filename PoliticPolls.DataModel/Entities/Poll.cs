@@ -7,16 +7,16 @@ namespace PoliticPolls.DataModel
     {
         public Poll()
         {
-            OrderSets = new HashSet<OrderSets>();
-            PoliticianSets = new HashSet<PoliticianSets>();
+            Orders = new HashSet<OrderSets>();
+            Politicians = new HashSet<PoliticianSets>();
         }
 
         public decimal Id { get; set; }
         public decimal IdRespondent { get; set; }
         public DateTime? PollDate { get; set; }
 
-        public Respondents IdRespondentNavigation { get; set; }
-        public ICollection<OrderSets> OrderSets { get; set; }
-        public ICollection<PoliticianSets> PoliticianSets { get; set; }
+        public Respondents Respondent { get; set; }
+        public ICollection<OrderSets> Orders { get; set; }
+        public ICollection<PoliticianSets> Politicians { get; set; }
     }
 }

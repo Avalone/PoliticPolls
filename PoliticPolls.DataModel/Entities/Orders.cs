@@ -14,7 +14,7 @@ namespace PoliticPolls.DataModel
         public string Text { get; set; }
         public decimal? IdPolitician { get; set; }
 
-        public Politicians IdPoliticianNavigation { get; set; }
+        public Politicians Politician { get; set; }
         public ICollection<OrderSets> OrderSets { get; set; }
     }
 }

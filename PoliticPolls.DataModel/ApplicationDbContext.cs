@@ -25,11 +25,6 @@ namespace PoliticPolls.DataModel
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-//            if (!optionsBuilder.IsConfigured)
-//            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-//                optionsBuilder.UseOracle("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=StudyOracle)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=POLLSDB;Password=POLLSDB;");
-//            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -56,7 +51,7 @@ namespace PoliticPolls.DataModel
                     .HasColumnName("text")
                     .HasColumnType("VARCHAR2(1000)");
 
-                entity.HasOne(d => d.IdPoliticianNavigation)
+                entity.HasOne(d => d.Politician)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.IdPolitician)
                     .HasConstraintName("fk_orders_politicians");
@@ -80,14 +75,14 @@ namespace PoliticPolls.DataModel
                     .HasColumnName("id_order")
                     .HasColumnType("NUMBER");
 
-                entity.HasOne(d => d.IdOrderNavigation)
+                entity.HasOne(d => d.Order)
                     .WithMany(p => p.OrderSets)
                     .HasForeignKey(d => d.IdOrder)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_order_sets_orders");
 
-                entity.HasOne(d => d.IdPollNavigation)
-                    .WithMany(p => p.OrderSets)
+                entity.HasOne(d => d.Poll)
+                    .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.IdPoll)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_order_sets_poll");
@@ -121,7 +116,7 @@ namespace PoliticPolls.DataModel
                     .HasColumnName("surname")
                     .HasColumnType("VARCHAR2(100)");
 
-                entity.HasOne(d => d.IdTerritoryNavigation)
+                entity.HasOne(d => d.Terrtitory)
                     .WithMany(p => p.Politicians)
                     .HasForeignKey(d => d.IdTerritory)
                     .OnDelete(DeleteBehavior.ClientSetNull)
@@ -150,14 +145,14 @@ namespace PoliticPolls.DataModel
                     .HasColumnName("rating")
                     .HasColumnType("NUMBER");
 
-                entity.HasOne(d => d.IdPoliticianNavigation)
+                entity.HasOne(d => d.Politician)
                     .WithMany(p => p.PoliticianSets)
                     .HasForeignKey(d => d.IdPolitician)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_politician_sets_politicians");
 
-                entity.HasOne(d => d.IdPollNavigation)
-                    .WithMany(p => p.PoliticianSets)
+                entity.HasOne(d => d.Poll)
+                    .WithMany(p => p.Politicians)
                     .HasForeignKey(d => d.IdPoll)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_politician_sets_poll");
@@ -188,7 +183,7 @@ namespace PoliticPolls.DataModel
                     .HasColumnType("DATE")
                     .HasDefaultValueSql("CURRENT_DATE ");
 
-                entity.HasOne(d => d.IdRespondentNavigation)
+                entity.HasOne(d => d.Respondent)
                     .WithOne(p => p.Poll)
                     .HasForeignKey<Poll>(d => d.IdRespondent)
                     .OnDelete(DeleteBehavior.ClientSetNull)

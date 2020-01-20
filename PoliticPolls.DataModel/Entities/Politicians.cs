@@ -17,7 +17,7 @@ namespace PoliticPolls.DataModel
         public string Patro { get; set; }
         public decimal IdTerritory { get; set; }
 
-        public Terrtitory IdTerritoryNavigation { get; set; }
+        public Terrtitory Terrtitory { get; set; }
         public ICollection<Orders> Orders { get; set; }
         public ICollection<PoliticianSets> PoliticianSets { get; set; }
     }
