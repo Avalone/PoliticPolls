@@ -15,7 +15,7 @@
             @Html.DisplayNameFor(model => model.PollDate)
         </th>
         <th>
-            @*@Html.DisplayNameFor(model => model.Respondent.Name)*@
+            @Html.DisplayNameFor(model => model.Respondent.Name)
         </th>
         <th></th>
     </tr>
@@ -26,7 +26,7 @@
             @Html.DisplayFor(modelItem => item.PollDate)
         </td>
         <td>
-            @*@Html.DisplayFor(modelItem => item.respondents.name)*@
+            @Html.DisplayFor(modelItem => item.Respondent.Name)
         </td>
         <td>
             @Html.ActionLink("Редактировать", "Edit", new { id=item.Id }) |

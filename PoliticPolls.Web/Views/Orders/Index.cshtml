@@ -14,9 +14,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Text)
         </th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.Polititians.name)
-        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.Politician.Name)
+        </th>
         <th></th>
         <th></th>
     </tr>
@@ -28,7 +28,7 @@
                 @Html.DisplayFor(modelItem => item.Text)
             </td>
             <td>
-               @* @Html.DisplayFor(modelItem => item.politicians.surname) @Html.DisplayFor(modelItem => item.politicians.name) @Html.DisplayFor(modelItem => item.politicians.patro)*@
+                @Html.DisplayFor(modelItem => item.Politician.Surname) @Html.DisplayFor(modelItem => item.Politician.Name) @Html.DisplayFor(modelItem => item.Politician.Patro)
             </td>
             <td>
                 @Html.ActionLink("Редактировать", "Edit", new { id = item.Id }) |
