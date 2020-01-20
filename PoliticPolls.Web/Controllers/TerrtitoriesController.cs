@@ -21,7 +21,7 @@ namespace PoliticPolls.Web.Controllers
         }
 
         // GET: Terrtitories/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(decimal? id)
         {
             if (id == null)
             {
@@ -59,7 +59,7 @@ namespace PoliticPolls.Web.Controllers
         }
 
         // GET: Terrtitories/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(decimal? id)
         {
             if (id == null)
             {
@@ -90,7 +90,7 @@ namespace PoliticPolls.Web.Controllers
         }
 
         // GET: Terrtitories/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(decimal? id)
         {
             if (id == null)
             {
@@ -107,7 +107,7 @@ namespace PoliticPolls.Web.Controllers
         // POST: Terrtitories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(decimal id)
         {
             var terrtitory = db.Terrtitory.Find(id);
             db.Terrtitory.Remove(terrtitory);

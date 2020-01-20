@@ -27,7 +27,7 @@ namespace PoliticPolls.Web.Controllers
         }
 
         // GET: PoliticianSets/Details/5
-        public ActionResult Details(int? id_politician, int? id_poll)
+        public ActionResult Details(decimal? id_politician, decimal? id_poll)
         {
             if (!id_politician.HasValue || !id_poll.HasValue)
             {
@@ -69,7 +69,7 @@ namespace PoliticPolls.Web.Controllers
         }
 
         // GET: PoliticianSets/Edit/5
-        public ActionResult Edit(int? id_politician, int? id_poll)
+        public ActionResult Edit(decimal? id_politician, decimal? id_poll)
         {
             if (!id_politician.HasValue || !id_poll.HasValue)
             {
@@ -104,7 +104,7 @@ namespace PoliticPolls.Web.Controllers
         }
 
         // GET: PoliticianSets/Delete/5
-        public ActionResult Delete(int? id_politician, int? id_poll)
+        public ActionResult Delete(decimal? id_politician, decimal? id_poll)
         {
             if (!id_politician.HasValue || !id_poll.HasValue)
             {
@@ -121,7 +121,7 @@ namespace PoliticPolls.Web.Controllers
         // POST: PoliticianSets/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int? id_politician, int? id_poll)
+        public ActionResult DeleteConfirmed(decimal? id_politician, decimal? id_poll)
         {
             var politician_sets = db.PoliticianSets.Where(x => x.IdPolitician == id_politician.Value && x.IdPoll == id_poll).FirstOrDefault();
             db.PoliticianSets.Remove(politician_sets);
