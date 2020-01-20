@@ -10,7 +10,7 @@ namespace PoliticPolls.DataModel
             Politicians = new HashSet<Politicians>();
         }
 
-        public decimal Id { get; set; }
+        public int Id { get; set; }
         public string TerritoryName { get; set; }
 
         public ICollection<Politicians> Politicians { get; set; }

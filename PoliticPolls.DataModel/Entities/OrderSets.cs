@@ -5,8 +5,8 @@ namespace PoliticPolls.DataModel
 {
     public partial class OrderSets
     {
-        public decimal IdPoll { get; set; }
-        public decimal IdOrder { get; set; }
+        public int IdPoll { get; set; }
+        public int IdOrder { get; set; }
 
         public Orders Order { get; set; }
         public Poll Poll { get; set; }

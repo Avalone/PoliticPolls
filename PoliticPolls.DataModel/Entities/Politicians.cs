@@ -11,11 +11,11 @@ namespace PoliticPolls.DataModel
             PoliticianSets = new HashSet<PoliticianSets>();
         }
 
-        public decimal Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Patro { get; set; }
-        public decimal IdTerritory { get; set; }
+        public int IdTerritory { get; set; }
 
         public Terrtitory Terrtitory { get; set; }
         public ICollection<Orders> Orders { get; set; }

@@ -11,8 +11,8 @@ namespace PoliticPolls.DataModel
             Politicians = new HashSet<PoliticianSets>();
         }
 
-        public decimal Id { get; set; }
-        public decimal IdRespondent { get; set; }
+        public int Id { get; set; }
+        public int IdRespondent { get; set; }
         public DateTime? PollDate { get; set; }
 
         public Respondents Respondent { get; set; }

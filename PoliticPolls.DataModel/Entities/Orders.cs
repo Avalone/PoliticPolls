@@ -10,9 +10,9 @@ namespace PoliticPolls.DataModel
             OrderSets = new HashSet<OrderSets>();
         }
 
-        public decimal Id { get; set; }
+        public int Id { get; set; }
         public string Text { get; set; }
-        public decimal? IdPolitician { get; set; }
+        public int? IdPolitician { get; set; }
 
         public Politicians Politician { get; set; }
         public ICollection<OrderSets> OrderSets { get; set; }

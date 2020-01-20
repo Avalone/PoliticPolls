@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace PoliticPolls.DataModel
 {
-    public partial class ApplicationDbContext : DbContext
+    public partial class ApplicationDbContext : DbContext, IDesignTimeDbContextFactory<ApplicationDbContext>
     {
         //public ApplicationDbContext()
         //{
@@ -23,8 +24,17 @@ namespace PoliticPolls.DataModel
         public virtual DbSet<Respondents> Respondents { get; set; }
         public virtual DbSet<Terrtitory> Terrtitory { get; set; }
 
+        public ApplicationDbContext CreateDbContext(string[] args)
+        {
+            return new ApplicationDbContext(null);
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseOracle("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=StudyOracle)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE)));User Id=POLLSDB;Password=POLLSDB;");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
