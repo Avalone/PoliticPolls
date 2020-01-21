@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using PoliticPolls.DataModel;
-using System.Collections.Generic;
+using PoliticPolls.Web.Services;
 using System.Data;
 using System.Linq;
-using System.Net;
 
 namespace PoliticPolls.Web.Controllers
 {
@@ -22,18 +22,18 @@ namespace PoliticPolls.Web.Controllers
         // GET: PoliticianSets
         public ActionResult Index()
         {
-            var politician_sets = db.PoliticianSets.Include(p => p.Politician).Include(p => p.Poll); 
+            var politician_sets = db.PoliticianSets.Include(p => p.Politician).Include(p => p.Poll).ThenInclude(p => p.Respondent);
             return View(politician_sets.ToList());
         }
 
         // GET: PoliticianSets/Details/5
-        public ActionResult Details(decimal? id_politician, decimal? id_poll)
+        public ActionResult Details(decimal? IdPolitician, decimal? IdPoll)
         {
-            if (!id_politician.HasValue || !id_poll.HasValue)
+            if (!IdPolitician.HasValue || !IdPoll.HasValue)
             {
                 return BadRequest();
             }
-            var politician_sets = db.PoliticianSets.Where(x => x.IdPolitician == id_politician.Value && x.IdPoll == id_poll).FirstOrDefault();
+            var politician_sets = db.PoliticianSets.Where(x => x.IdPolitician == IdPolitician.Value && x.IdPoll == IdPoll).FirstOrDefault();
             if (politician_sets == null)
             {
                 return NotFound();
@@ -44,8 +44,8 @@ namespace PoliticPolls.Web.Controllers
         // GET: PoliticianSets/Create
         public ActionResult Create()
         {
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname");
-            ViewBag.id_poll = new SelectList(db.Poll, "Id", "Id");
+            ViewBag.IdPolitician = new SelectList(db.Politicians, "Id", "Surname");
+            ViewBag.IdPoll = new SelectList(db.Poll, "Id", "Id");
             return View();
         }
 
@@ -54,34 +54,43 @@ namespace PoliticPolls.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("IdPoll","IdPolitician","Rating")] PoliticianSets politician_sets)
+        public ActionResult Create([Bind("IdPoll", "IdPolitician", "Rating")] PoliticianSets politician_sets)
         {
             if (ModelState.IsValid)
             {
-                db.PoliticianSets.Add(politician_sets);
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "INSERT_POLITICIAN_SETS(:id_poll, :id_politician, :rating, :result)",
+                    new OracleParameter("id_poll", politician_sets.IdPoll),
+                    new OracleParameter("id_politician", politician_sets.IdPolitician),
+                    new OracleParameter("rating", politician_sets.Rating),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
 
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", politician_sets.IdPolitician);
-            ViewBag.id_poll = new SelectList(db.Poll, "Id", "Id", politician_sets.IdPoll);
+            ViewBag.IdPolitician = new SelectList(db.Politicians, "Id", "Surname", politician_sets.IdPolitician);
+            ViewBag.IdPoll = new SelectList(db.Poll, "Id", "Id", politician_sets.IdPoll);
             return View(politician_sets);
         }
 
         // GET: PoliticianSets/Edit/5
-        public ActionResult Edit(decimal? id_politician, decimal? id_poll)
+        public ActionResult Edit(decimal? IdPolitician, decimal? IdPoll)
         {
-            if (!id_politician.HasValue || !id_poll.HasValue)
+            if (!IdPolitician.HasValue || !IdPoll.HasValue)
             {
                 return BadRequest();
             }
-            var politician_sets = db.PoliticianSets.Where(x => x.IdPolitician == id_politician.Value && x.IdPoll == id_poll).FirstOrDefault();
+            var politician_sets = db.PoliticianSets.Where(x => x.IdPolitician == IdPolitician.Value && x.IdPoll == IdPoll).FirstOrDefault();
             if (politician_sets == null)
             {
                 return NotFound();
             }
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", politician_sets.IdPolitician);
-            ViewBag.id_poll = new SelectList(db.Poll, "Id", "Id", politician_sets.IdPoll);
+            ViewBag.IdPolitician = new SelectList(db.Politicians, "Id", "Surname", politician_sets.IdPolitician);
+            ViewBag.IdPoll = new SelectList(db.Poll, "Id", "Id", politician_sets.IdPoll);
             return View(politician_sets);
         }
 
@@ -90,16 +99,25 @@ namespace PoliticPolls.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind("IdPoll","IdPolitician","Rating")] PoliticianSets politician_sets)
+        public ActionResult Edit([Bind("IdPoll", "IdPolitician", "Rating")] PoliticianSets politician_sets)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(politician_sets).State = EntityState.Modified;
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "UPDATE_POLITICIAN_SETS(:id_poll, :id_politician, :rating, :result)",
+                    new OracleParameter("id_poll", politician_sets.IdPoll),
+                    new OracleParameter("id_politician", politician_sets.IdPolitician),
+                    new OracleParameter("rating", politician_sets.Rating),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", politician_sets.IdPolitician);
-            ViewBag.id_poll = new SelectList(db.Poll, "Id", "Id", politician_sets.IdPoll);
+            ViewBag.IdPolitician = new SelectList(db.Politicians, "Id", "Surname", politician_sets.IdPolitician);
+            ViewBag.IdPoll = new SelectList(db.Poll, "Id", "Id", politician_sets.IdPoll);
             return View(politician_sets);
         }
 
@@ -123,9 +141,16 @@ namespace PoliticPolls.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(decimal? id_politician, decimal? id_poll)
         {
-            var politician_sets = db.PoliticianSets.Where(x => x.IdPolitician == id_politician.Value && x.IdPoll == id_poll).FirstOrDefault();
-            db.PoliticianSets.Remove(politician_sets);
-            db.SaveChanges();
+            var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+            SqlUtility.ExecuteStoredProcedure(db, "DELETE_POLITICIAN_SETS(:id_poll, :id_politician, :result)",
+                new OracleParameter("id_poll", id_poll),
+                new OracleParameter("id_politician", id_politician),
+                resParam);
+            var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+            if (result < 0)
+            {
+                return BadRequest();
+            }
             return RedirectToAction("Index");
         }
 

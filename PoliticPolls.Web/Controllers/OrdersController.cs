@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using PoliticPolls.DataModel;
+using PoliticPolls.Web.Services;
 using System.Linq;
 
 namespace PoliticPolls.Web.Controllers
@@ -40,7 +42,7 @@ namespace PoliticPolls.Web.Controllers
         // GET: Orders/Create
         public ActionResult Create()
         {
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname");
+            ViewBag.IdPolitician = new SelectList(db.Politicians, "Id", "Surname");
             return View();
         }
 
@@ -53,12 +55,21 @@ namespace PoliticPolls.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Orders.Add(orders);
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "INSERT_ORDERS(:id, :text, :id_politician, :result)",
+                    new OracleParameter("id", orders.Id),
+                    new OracleParameter("text", orders.Text),
+                    new OracleParameter("id_politician", orders.IdPolitician),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
 
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
+            ViewBag.IdPolitician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
             return View(orders);
         }
 
@@ -74,7 +85,7 @@ namespace PoliticPolls.Web.Controllers
             {
                 return NotFound();
             }
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
+            ViewBag.IdPolitician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
             return View(orders);
         }
 
@@ -87,11 +98,20 @@ namespace PoliticPolls.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(orders).State = EntityState.Modified;
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "UPDATE_ORDERS(:id, :text, :id_politician, :result)",
+                    new OracleParameter("id", orders.Id),
+                    new OracleParameter("text", orders.Text),
+                    new OracleParameter("id_politician", orders.IdPolitician),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
-            ViewBag.id_politician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
+            ViewBag.IdPolitician = new SelectList(db.Politicians, "Id", "Surname", orders.IdPolitician);
             return View(orders);
         }
 
@@ -115,9 +135,13 @@ namespace PoliticPolls.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(decimal id)
         {
-            var orders = db.Orders.Find(id);
-            db.Orders.Remove(orders);
-            db.SaveChanges();
+            var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+            SqlUtility.ExecuteStoredProcedure(db, "DELETE_ORDERS(:id, :result)", new OracleParameter("id", id), resParam);
+            var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+            if (result < 0)
+            {
+                return BadRequest();
+            }
             return RedirectToAction("Index");
         }
 

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using PoliticPolls.DataModel;
+using PoliticPolls.Web.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -21,7 +23,7 @@ namespace PoliticPolls.Web.Controllers
         // GET: Politicians
         public ActionResult Index()
         {
-            var politicians = db.Politicians;//.Include(p => p.Terrtitory);
+            var politicians = db.Politicians.Include(p => p.Terrtitory);
             return View(politicians.ToList());
         }
 
@@ -43,7 +45,7 @@ namespace PoliticPolls.Web.Controllers
         // GET: Politicians/Create
         public ActionResult Create()
         {
-            ViewBag.id_territory = new SelectList(db.Terrtitory, "Id", "TerritoryName");
+            ViewBag.IdTerritory = new SelectList(db.Terrtitory, "Id", "TerritoryName");
             return View();
         }
 
@@ -56,12 +58,23 @@ namespace PoliticPolls.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Politicians.Add(politicians);
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "INSERT_POLITICIANS(:id, :name, :surname, :patro, :id_territory, :result)",
+                    new OracleParameter("id", politicians.Id),
+                    new OracleParameter("name", politicians.Name),
+                    new OracleParameter("surname", politicians.Surname),
+                    new OracleParameter("patro", politicians.Patro),
+                    new OracleParameter("id_territory", politicians.IdTerritory),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
 
-            ViewBag.id_territory = new SelectList(db.Terrtitory, "Id", "TerritoryName", politicians.IdTerritory);
+            ViewBag.IdTerritory = new SelectList(db.Terrtitory, "Id", "TerritoryName", politicians.IdTerritory);
             return View(politicians);
         }
 
@@ -77,7 +90,7 @@ namespace PoliticPolls.Web.Controllers
             {
                 return NotFound();
             }
-            ViewBag.id_territory = new SelectList(db.Terrtitory, "Id", "TerritoryName", politicians.IdTerritory);
+            ViewBag.IdTerritory = new SelectList(db.Terrtitory, "Id", "TerritoryName", politicians.IdTerritory);
             return View(politicians);
         }
 
@@ -90,11 +103,22 @@ namespace PoliticPolls.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(politicians).State = EntityState.Modified;
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "UPDATE_POLITICIANS(:id, :name, :surname, :patro, :id_territory, :result)",
+                    new OracleParameter("id", politicians.Id),
+                    new OracleParameter("name", politicians.Name),
+                    new OracleParameter("surname", politicians.Surname),
+                    new OracleParameter("patro", politicians.Patro),
+                    new OracleParameter("id_territory", politicians.IdTerritory),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
-            ViewBag.id_territory = new SelectList(db.Terrtitory, "Id", "TerritoryName", politicians.IdTerritory);
+            ViewBag.IdTerritory = new SelectList(db.Terrtitory, "Id", "TerritoryName", politicians.IdTerritory);
             return View(politicians);
         }
 
@@ -118,9 +142,13 @@ namespace PoliticPolls.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(decimal id)
         {
-            var politicians = db.Politicians.Find(id);
-            db.Politicians.Remove(politicians);
-            db.SaveChanges();
+            var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+            SqlUtility.ExecuteStoredProcedure(db, "DELETE_POLITICIANS(:id, :result)", new OracleParameter("id", id), resParam);
+            var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+            if (result < 0)
+            {
+                return BadRequest();
+            }
             return RedirectToAction("Index");
         }
 

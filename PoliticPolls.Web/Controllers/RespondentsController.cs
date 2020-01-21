@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using PoliticPolls.DataModel;
+using PoliticPolls.Web.Services;
 using System.Linq;
 
 namespace PoliticPolls.Web.Controllers
@@ -46,12 +48,23 @@ namespace PoliticPolls.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Id","Name","Surname","Patro","BirthDate")] Respondents respondents)
+        public ActionResult Create([Bind("Id", "Name", "Surname", "Patro", "BirthDate")] Respondents respondents)
         {
             if (ModelState.IsValid)
             {
-                db.Respondents.Add(respondents);
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "INSERT_RESPONDENTS(:id, :name, :surname, :patro, :birthdate, :result)",
+                    new OracleParameter("id", respondents.Id),
+                    new OracleParameter("name", respondents.Name),
+                    new OracleParameter("surname", respondents.Surname),
+                    new OracleParameter("patro", respondents.Patro),
+                    new OracleParameter("birthdate", OracleDbType.Date, respondents.BirthDate, System.Data.ParameterDirection.Input),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
 
@@ -78,12 +91,23 @@ namespace PoliticPolls.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind("Id","Name","Surname","Patro","BirthDate")] Respondents respondents)
+        public ActionResult Edit([Bind("Id", "Name", "Surname", "Patro", "BirthDate")] Respondents respondents)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(respondents).State = EntityState.Modified;
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "UPDATE_RESPONDENTS(:id, :name, :surname, :patro, :birthdate, :result)",
+                    new OracleParameter("id", respondents.Id),
+                    new OracleParameter("name", respondents.Name),
+                    new OracleParameter("surname", respondents.Surname),
+                    new OracleParameter("patro", respondents.Patro),
+                    new OracleParameter("birthdate", OracleDbType.Date, respondents.BirthDate, System.Data.ParameterDirection.Input),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
             return View(respondents);
@@ -109,9 +133,13 @@ namespace PoliticPolls.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(decimal id)
         {
-            var respondents = db.Respondents.Find(id);
-            db.Respondents.Remove(respondents);
-            db.SaveChanges();
+            var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+            SqlUtility.ExecuteStoredProcedure(db, "DELETE_RESPONDENTS(:id, :result)", new OracleParameter("id", id), resParam);
+            var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+            if (result < 0)
+            {
+                return BadRequest();
+            }
             return RedirectToAction("Index");
         }
 

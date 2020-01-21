@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using PoliticPolls.DataModel;
+using PoliticPolls.Web.Services;
 using System.Linq;
 
 namespace PoliticPolls.Web.Controllers
@@ -40,7 +42,7 @@ namespace PoliticPolls.Web.Controllers
         // GET: Polls/Create
         public ActionResult Create()
         {
-            ViewBag.id_respondent = new SelectList(db.Respondents, "Id", "Surname");
+            ViewBag.IdRespondent = new SelectList(db.Respondents, "Id", "Surname");
             return View();
         }
 
@@ -49,16 +51,25 @@ namespace PoliticPolls.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("id","PollDate","IdRespondent")] Poll poll)
+        public ActionResult Create([Bind("Id", "PollDate", "IdRespondent")] Poll poll)
         {
             if (ModelState.IsValid)
             {
-                db.Poll.Add(poll);
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "INSERT_POLL(:id, :id_respondent, :poll_date, :result)",
+                    new OracleParameter("id", poll.Id),
+                    new OracleParameter("id_respondent", poll.IdRespondent),
+                    new OracleParameter("poll_date", OracleDbType.Date, poll.PollDate, System.Data.ParameterDirection.Input),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
 
-            ViewBag.id_respondent = new SelectList(db.Respondents, "id", "surname", poll.IdRespondent);
+            ViewBag.IdRespondent = new SelectList(db.Respondents, "id", "surname", poll.IdRespondent);
             return View(poll);
         }
 
@@ -74,7 +85,7 @@ namespace PoliticPolls.Web.Controllers
             {
                 return NotFound();
             }
-            ViewBag.id_respondent = new SelectList(db.Respondents, "Id", "Surname", poll.IdRespondent);
+            ViewBag.IdRespondent = new SelectList(db.Respondents, "Id", "Surname", poll.IdRespondent);
             return View(poll);
         }
 
@@ -83,15 +94,24 @@ namespace PoliticPolls.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind("Id","PollDate","IdRespondent")] Poll poll)
+        public ActionResult Edit([Bind("Id", "PollDate", "IdRespondent")] Poll poll)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(poll).State = EntityState.Modified;
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "UPDATE_POLL(:id, :id_respondent, :poll_date, :result)",
+                    new OracleParameter("id", poll.Id),
+                    new OracleParameter("id_respondent", poll.IdRespondent),
+                    new OracleParameter("poll_date", OracleDbType.Date, poll.PollDate, System.Data.ParameterDirection.Input),
+                    resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
-            ViewBag.id_respondent = new SelectList(db.Respondents, "Id", "Surname", poll.IdRespondent);
+            ViewBag.IdRespondent = new SelectList(db.Respondents, "Id", "Surname", poll.IdRespondent);
             return View(poll);
         }
 
@@ -115,9 +135,13 @@ namespace PoliticPolls.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(decimal id)
         {
-            var poll = db.Poll.Find(id);
-            db.Poll.Remove(poll);
-            db.SaveChanges();
+            var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+            SqlUtility.ExecuteStoredProcedure(db, "DELETE_POLL(:id, :result)", new OracleParameter("id", id), resParam);
+            var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+            if (result < 0)
+            {
+                return BadRequest();
+            }
             return RedirectToAction("Index");
         }
 

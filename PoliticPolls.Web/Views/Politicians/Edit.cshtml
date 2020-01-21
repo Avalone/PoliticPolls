@@ -42,9 +42,9 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.IdTerritory, "id_territory", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.IdTerritory, "IdTerritory", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("id_territory", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("IdTerritory", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.IdTerritory, "", new { @class = "text-danger" })
             </div>
         </div>

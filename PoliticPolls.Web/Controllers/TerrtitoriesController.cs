@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
 using PoliticPolls.DataModel;
 using PoliticPolls.Web.Services;
-using System;
 using System.Linq;
 
 namespace PoliticPolls.Web.Controllers
@@ -56,6 +54,10 @@ namespace PoliticPolls.Web.Controllers
                 var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
                 SqlUtility.ExecuteStoredProcedure(db, "INSERT_TERRITORY(:id, :name, :result)", new OracleParameter("id", terrtitory.Id), new OracleParameter("name", terrtitory.TerritoryName), resParam);
                 var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
 
@@ -86,8 +88,13 @@ namespace PoliticPolls.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(terrtitory).State = EntityState.Modified;
-                db.SaveChanges();
+                var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+                SqlUtility.ExecuteStoredProcedure(db, "UPDATE_TERRITORY(:id, :name, :result)", new OracleParameter("id", terrtitory.Id), new OracleParameter("name", terrtitory.TerritoryName), resParam);
+                var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+                if (result < 0)
+                {
+                    return BadRequest();
+                }
                 return RedirectToAction("Index");
             }
             return View(terrtitory);
@@ -113,9 +120,13 @@ namespace PoliticPolls.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(decimal id)
         {
-            var terrtitory = db.Terrtitory.Find(id);
-            db.Terrtitory.Remove(terrtitory);
-            db.SaveChanges();
+            var resParam = new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output);
+            SqlUtility.ExecuteStoredProcedure(db, "DELETE_TERRITORY(:id, :result)", new OracleParameter("id", id), resParam);
+            var result = ((Oracle.ManagedDataAccess.Types.OracleDecimal)resParam.Value).Value;
+            if (result < 0)
+            {
+                return BadRequest();
+            }
             return RedirectToAction("Index");
         }
 

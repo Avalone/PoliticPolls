@@ -18,7 +18,7 @@
             @Html.DisplayNameFor(model => model.Politician.Surname) @Html.DisplayNameFor(model => model.Politician.Name) @Html.DisplayNameFor(model => model.Politician.Patro)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Poll.Id)
+            @Html.DisplayNameFor(model => model.Poll.Respondent)
         </th>
         <th></th>
     </tr>
@@ -32,12 +32,12 @@
             @Html.DisplayFor(modelItem => item.Politician.Surname) @Html.DisplayFor(modelItem => item.Politician.Name) @Html.DisplayFor(modelItem => item.Politician.Patro)
         </td>
         <td>
-            @*@Html.DisplayFor(modelItem => item.poll.id)*@
+            @Html.DisplayFor(modelItem => item.Poll.Respondent.Surname) @Html.DisplayFor(modelItem => item.Poll.Respondent.Name) @Html.DisplayFor(modelItem => item.Poll.Respondent.Patro)
         </td>
         <td>
-            @Html.ActionLink("Редактировать", "Edit", new { id_poll = item.IdPoll, id_politician = item.IdPolitician }) |
-            @Html.ActionLink("Подробнее", "Details", new { id_poll = item.IdPoll, id_politician = item.IdPolitician }) |
-            @Html.ActionLink("Удалить", "Delete", new { id_poll = item.IdPoll, id_politician = item.IdPolitician })
+            @Html.ActionLink("Редактировать", "Edit", new { IdPoll = item.IdPoll, IdPolitician = item.IdPolitician }) |
+            @Html.ActionLink("Подробнее", "Details", new { IdPoll = item.IdPoll, IdPolitician = item.IdPolitician }) |
+            @Html.ActionLink("Удалить", "Delete", new { IdPoll = item.IdPoll, IdPolitician = item.IdPolitician })
         </td>
     </tr>
 }
