@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Oracle.ManagedDataAccess.Client;
 using PoliticPolls.DataModel;
 using System.Linq;
 
@@ -50,8 +51,11 @@ namespace PoliticPolls.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Terrtitory.Add(terrtitory);
-                db.SaveChanges();
+                var pars = new object[] { new OracleParameter("id", terrtitory.Id), new OracleParameter("name", terrtitory.TerritoryName), new OracleParameter("result", OracleDbType.Decimal, System.Data.ParameterDirection.Output) };
+                var res = db.Database.ExecuteSqlCommand("BEGIN INSERT_TERRITORY(:id, :name, :result); END;", pars);
+                //.Terrtitory.FromSql("CALL POLLSDB.TEST").FirstOrDefault()
+                //db.Terrtitory.Add(terrtitory);
+                //db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
