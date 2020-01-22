@@ -21,6 +21,7 @@ namespace PoliticPolls.DataModel
         public virtual DbSet<PoliticianSets> PoliticianSets { get; set; }
         public virtual DbSet<Poll> Poll { get; set; }
         public virtual DbSet<Respondents> Respondents { get; set; }
+        public virtual DbSet<RespondentsLog> RespondentsLog { get; set; }
         public virtual DbSet<Terrtitory> Terrtitory { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -218,6 +219,37 @@ namespace PoliticPolls.DataModel
                 entity.Property(e => e.Surname)
                     .HasColumnName("surname")
                     .HasColumnType("VARCHAR2(100)");
+            });
+
+            modelBuilder.Entity<RespondentsLog>(entity =>
+            {
+                entity.ToTable("RESPONDENTS_LOG");
+
+                entity.HasIndex(e => e.Id)
+                    .HasName("RESPONDENTS_LOG_PK")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ChangedAttr)
+                    .HasColumnName("CHANGED_ATTR")
+                    .HasColumnType("VARCHAR2(100)");
+
+                entity.Property(e => e.ChangedDate)
+                    .HasColumnName("CHANGED_DATE")
+                    .HasColumnType("DATE");
+
+                entity.Property(e => e.Command)
+                    .HasColumnName("COMMAND")
+                    .HasColumnType("VARCHAR2(100)");
+
+                entity.Property(e => e.NewValue)
+                    .HasColumnName("NEW_VALUE")
+                    .HasColumnType("VARCHAR2(1000)");
+
+                entity.Property(e => e.OldValue)
+                    .HasColumnName("OLD_VALUE")
+                    .HasColumnType("VARCHAR2(1000)");
             });
 
             modelBuilder.Entity<Terrtitory>(entity =>
